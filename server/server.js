@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const bot = require('./bot')
+const leave = require('./leaveRequest')
 
 // Start Express server
 const app = express()
@@ -26,6 +27,20 @@ app.post('/api/askQuestion', (req, res) => {
 				success[x].author = "bot";
 			}
 			res.status(200).send(success);
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
+app.post('/api/leave/showVacationDays', (req, res) => {
+	leave.readAvailableVacationDays(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success
+			})
 		}).catch(error => {
 			console.log('Error in your bot:', error)
 			if (!res.headersSent) {

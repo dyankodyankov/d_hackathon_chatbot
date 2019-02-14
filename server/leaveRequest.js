@@ -56,28 +56,25 @@ var getDestination = (destinationName) => {
 	})
 }
 
-var readBwTable = function (req, res) {
-	
-	const memory = req.body.conversation.memory;
-	var customerId = memory.plant.raw;
+var readAvailableVacationDays = function (req, res) {
 	
 	return new Promise((resolve, reject) => {
 		var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
 		var connectivity = vcap_services.connectivity[0].credentials;
-		getDestination("abapBackend1")
+		getDestination("ef1_backend")
 			.then(oDestination => {
 				getConnectivityToken()
 					.then(sToken => {
 						const agent = require('superagent');
 						require('superagent-proxy')(agent)
-						agent.get(oDestination.URL + "/sap/opu/odata/sap/REP_20151013114941_SRV/REP_20151013114941Results?$filter=A0D_CUSTOMER eq '" + customerId + "'&$format=json")
+						agent.get(oDestination.URL + "/sap/opu/odata/sap/HCMFAB_LEAVE_REQUEST_CR_SRV/TimeAccountSet?$format=json")
 							.set("Proxy-Authorization", "Bearer " + sToken)
 							.proxy("http://" + connectivity.onpremise_proxy_host + ":" + connectivity.onpremise_proxy_port)
 							.set("Authorization", "Basic " + btoa(oDestination.User + ":" + oDestination.Password))
 							.then(response => {
-								var x = response.body.d.results;
+							
 								
-								var aMessages = [];
+								/*var aMessages = [];
 								
 								var r = {
 									"type": "list",
@@ -107,7 +104,12 @@ var readBwTable = function (req, res) {
 								}
 								aMessages.push(t);
 								aMessages.push(r);
-								return resolve(aMessages);
+								return resolve(aMessages);*/
+								
+								return resolve(response);
+								
+								
+								
 							})
 					})
 			})
@@ -161,6 +163,6 @@ var readBwTableSingle = function (req, res) {
 };
 
 module.exports = {
-	readBwTable,
+	readAvailableVacationDays,
 	readBwTableSingle
 }
