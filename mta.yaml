@@ -1,0 +1,52 @@
+ID: doehler_chatbot_impl
+_schema-version: '2.1'
+version: 0.0.1
+modules:
+  - name: ui
+    type: html5
+    path: ui
+    parameters:
+      disk-quota: 1024MB
+      memory: 256MB
+    build-parameters:
+      builder: grunt
+    requires:
+      - name: dest_doehler_chatbot_impl
+      - name: server
+      - name: server_api
+        group: destinations
+        properties:
+          url: '~{url}'
+          name: server
+          forwardAuthToken: true
+      - name: uaa_doehler_chatbot_impl
+  - name: server
+    type: nodejs
+    path: server
+    provides:
+      - name: server_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: con_doehler_chatbot_impl
+      - name: dest_doehler_chatbot_impl
+    build-parameters:
+      disk-quota: 512MB
+      memory: 512MB
+resources:
+  - name: uaa_doehler_chatbot_impl
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: dest_doehler_chatbot_impl
+    parameters:
+      service-plan: lite
+      service: destination
+    type: org.cloudfoundry.managed-service
+  - name: con_doehler_chatbot_impl
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-plan: lite
+      service: connectivity

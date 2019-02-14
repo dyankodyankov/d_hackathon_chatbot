@@ -1,0 +1,123 @@
+/* Enter your custom styles here */
+
+.floatLeft {
+    float: left !important;
+}
+
+.sapMIBar.sapMHeader-CTX {
+    background-color: #3C4D5C !important;
+}
+
+.sapMIBar.sapMSubHeader-CTX {
+    background-color: #fff !important;
+}
+
+.sapMBar {
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+html.sap-desktop .sapContrast .sapMIBar.sapMFooter-CTX,
+html.sap-desktop .sapContrast.sapMIBar.sapMFooter-CTX {
+    background-color: #fff !important;
+    border-top: none !important;
+}
+
+.sapContrast.sapMInputBaseInner,
+.sapContrast .sapMInputBaseInner {
+    background-color: #fff !important;
+    border: 1px solid #BFBFBF !important;
+    color: #000 !important;
+}
+
+.sapContrast.sapMInputBaseInner,
+.sapContrast .sapMInputBaseInner::placeholder {
+    color: #BFBFBF !important;
+}
+
+.sapMPage>section.sapMPageEnableScrolling {
+    background-color: #F5F5F5 !important;
+}
+
+.sapMLIB:hover {
+    background-color: transparent !important;
+}
+
+.headerText {
+    color: #fff !important;
+}
+
+.noHighlitghBtn {
+    text-shadow: none !important;
+    color: #fff !important;
+}
+
+.topAvater {
+    margin-top: 0.5rem;
+}
+
+.input-send-button {}
+
+.maxWidth {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+@media only screen and (max-width: 800px) {
+    .maxWidth {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        margin-right: 0.5rem;
+    }
+}
+
+.buttonPadding {
+    padding-right: 0.5rem;
+}
+
+.yesNoBtn {
+    width: 200px !important;
+}
+
+
+/* bot reply */
+
+.sapMFlexBoxBGSolid {
+    background: #fff !important;
+    border: 2px solid #E5E5E5;
+    color: #000 !important;
+    -webkit-border-radius: 8px !important;
+    -moz-border-radius: 8px !important;
+    border-radius: 8px !important;
+}
+
+.sapMText {
+    font-size: 1.3rem !important;
+}
+
+.sapMLnk {
+    font-size: 1.3rem !important;
+}
+
+
+/*user input*/
+
+.sapMFlexBoxBGTranslucent {
+    background: #346187 !important;
+    color: #fff !important;
+    -webkit-border-radius: 8px 8px 0 8px !important;
+    -moz-border-radius: 8px 8px 0 5px !important;
+    border-radius: 8px 8px 0 8px !important;
+}
+
+.sapMListBGSolid .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover) {
+    background: transparent !important;
+}
+
+.sapMListNoData {
+    border-bottom: none !important;
+}
+
+.sapMLIB {
+    border-bottom: none !important;
+}
