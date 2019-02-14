@@ -1,6 +1,8 @@
 var xsenv = require('@sap/xsenv');
 var agent = require('superagent');
 
+var requestify = require('requestify');
+
 // Base64 encoding
 function btoa(str) {
 	return new Buffer(str).toString('base64');
@@ -57,7 +59,6 @@ var getDestination = (destinationName) => {
 }
 
 var readAvailableVacationDays = function (req, res) {
-	
 	return new Promise((resolve, reject) => {
 		var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
 		var connectivity = vcap_services.connectivity[0].credentials;
@@ -72,8 +73,6 @@ var readAvailableVacationDays = function (req, res) {
 							.proxy("http://" + connectivity.onpremise_proxy_host + ":" + connectivity.onpremise_proxy_port)
 							.set("Authorization", "Basic " + btoa(oDestination.User + ":" + oDestination.Password))
 							.then(response => {
-							
-								
 								/*var aMessages = [];
 								
 								var r = {
@@ -82,7 +81,6 @@ var readAvailableVacationDays = function (req, res) {
 										"elements": []
 									}
 								};
-								
 								for(var i = 0; i < x.length; i++){
 									var e = {
 										"title": x[i].A0D_PH1_T,
@@ -105,11 +103,9 @@ var readAvailableVacationDays = function (req, res) {
 								aMessages.push(t);
 								aMessages.push(r);
 								return resolve(aMessages);*/
-								
+
 								return resolve(response);
-								
-								
-								
+
 							})
 					})
 			})
@@ -119,40 +115,54 @@ var readAvailableVacationDays = function (req, res) {
 	})
 };
 
-var readBwTableSingle = function (req, res) {
+var readJobReqs = function (req, res) {
+	
+	var memory = req.body.conversation.memory;
+	
 	return new Promise((resolve, reject) => {
 		var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
 		var connectivity = vcap_services.connectivity[0].credentials;
-		getDestination("abapBackend1")
+		getDestination("successfactors")
 			.then(oDestination => {
 				getConnectivityToken()
 					.then(sToken => {
 						const agent = require('superagent');
-						require('superagent-proxy')(agent)
-						agent.get(oDestination.URL + "/sap/opu/odata/sap/Z_RIEDEL_SRV/ZSALES_TABLESet('1')?$format=json")
-							.set("Proxy-Authorization", "Bearer " + sToken)
-							.proxy("http://" + connectivity.onpremise_proxy_host + ":" + connectivity.onpremise_proxy_port)
+						agent.get(oDestination.URL + "/JobRequisitionLocale?$top=10&$format=json")
 							.set("Authorization", "Basic " + btoa(oDestination.User + ":" + oDestination.Password))
 							.then(response => {
-								var x = response.body.d;
-								var aMessages = [];
-								var r = {
-									"type": "list",
+								
+								var aMessage = [];
+								
+								if(memory.hasOwnProperty("job-description")){
+									var des = memory.job-description;
+									var s = "I have found " + response.body.d.results.length + " Jobs for you with description " + des + ".";
+								} else {
+									var s = "I have found " + response.body.d.results.length + " Jobs for you.";
+								}
+
+								var b = {
+									"type": "buttons",
 									"content": {
-										"elements": [{
-										"title": x.CustomerKey,
-										"imageUrl": "sap-icon://product",
-										"subtitle": x.ProductKey + ", " + x.Quantity + " Pieces",
-										"buttons": [{
-											"title": "Show Details",
-											"type": "web_url",
-											"value": "www.google.com"
-										}]
-									}]
+										"title": s,
+										"buttons": []
 									}
 								};
-								aMessages.push(r);
-								return resolve(aMessages);
+
+								var items = response.body.d.results;
+
+								for (var i = 0; i < items.length; i++) {
+									var x = {
+										"title": items[i].externalTitle,
+										"type": "postback",
+										"value": items[i].jobTitle
+									}
+									b.content.buttons.push(x);
+								}
+								
+								aMessage.push(b);
+
+								return resolve(aMessage);
+
 							})
 					})
 			})
@@ -162,7 +172,24 @@ var readBwTableSingle = function (req, res) {
 	})
 };
 
+/*var readJobReqs = function (req, res) {
+	return new Promise((resolve, reject) => {
+		return requestify.request('https://api12preview.sapsf.eu/odata/v2/JobRequisition?$top=1&$format=json', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Basic ' + btoa("SF_IPS_TECHUSER@dhlergmbhT1:DoehlerSF#2018")
+			},
+			dataType: 'json'
+		}).then((r) => {
+			return resolve(r);
+		});
+
+	});
+
+}*/
+
 module.exports = {
 	readAvailableVacationDays,
-	readBwTableSingle
+	readJobReqs
 }

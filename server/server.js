@@ -49,6 +49,20 @@ app.post('/api/leave/showVacationDays', (req, res) => {
 		})
 });
 
+app.post('/api/job/showJobReq', (req, res) => {
+	leave.readJobReqs(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success
+			})
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
 // Run Express server, on right port
 app.listen(app.get('port'), () => {
 	console.log('Our bot is running on port', app.get('port'))
