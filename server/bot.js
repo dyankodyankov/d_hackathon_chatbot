@@ -11,7 +11,7 @@ var reply = (request, response) => {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					'Authorization': 'Token f7b5119766dba3a42247b34dd909635a'
+					'Authorization': 'Token f7b5119766dba3a42247b34dd909635a' //developer token
 				},
 				dataType: 'json'
 			}).then((r) => {
@@ -28,7 +28,7 @@ var reply = (request, response) => {
 					},
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': 'Token 2821a4dd7f9951354985024ce90288a9'
+						'Authorization': 'Token 2821a4dd7f9951354985024ce90288a9' // request token
 					},
 					dataType: 'json'
 				}).then(function (response) {
@@ -47,7 +47,7 @@ var reply = (request, response) => {
 					},
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': 'Token 2821a4dd7f9951354985024ce90288a9'
+						'Authorization': 'Token 2821a4dd7f9951354985024ce90288a9' // request token
 					},
 					dataType: 'json'
 
