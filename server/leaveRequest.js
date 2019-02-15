@@ -116,9 +116,10 @@ var readAvailableVacationDays = function (req, res) {
 };
 
 var readJobReqs = function (req, res) {
-	
-	var memory = req.body.conversation.memory;
-	
+
+	const memory = req.body.conversation.memory;
+	var jobDesc = memory.jobDescription;
+
 	return new Promise((resolve, reject) => {
 		var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
 		var connectivity = vcap_services.connectivity[0].credentials;
@@ -127,41 +128,47 @@ var readJobReqs = function (req, res) {
 				getConnectivityToken()
 					.then(sToken => {
 						const agent = require('superagent');
-						agent.get(oDestination.URL + "/JobRequisitionLocale?$top=10&$format=json")
+						agent.get(oDestination.URL + "/JobRequisitionLocale?$filter=substringof('" + jobDesc +
+								"', externalTitle)&$format=json&$top=5&$expand=jobRequisition,jobRequisition/hiringManager")
 							.set("Authorization", "Basic " + btoa(oDestination.User + ":" + oDestination.Password))
 							.then(response => {
-								
+
 								var aMessage = [];
-								
-								if(memory.hasOwnProperty("job-description")){
-									var des = memory.job-description;
-									var s = "I have found " + response.body.d.results.length + " Jobs for you with description " + des + ".";
-								} else {
-									var s = "I have found " + response.body.d.results.length + " Jobs for you.";
-								}
-
-								var b = {
-									"type": "buttons",
-									"content": {
-										"title": s,
-										"buttons": []
-									}
-								};
-
 								var items = response.body.d.results;
 
-								for (var i = 0; i < items.length; i++) {
-									var x = {
-										"title": items[i].externalTitle,
-										"type": "postback",
-										"value": items[i].jobTitle
-									}
-									b.content.buttons.push(x);
-								}
-								
-								aMessage.push(b);
+								if (items.length > 0) {
 
-								return resolve(aMessage);
+									var b = {
+										"type": "buttons",
+										"content": {
+											"title": "I have found " + response.body.d.results.length + " Jobs for search term: '" + jobDesc + "'",
+											"buttons": []
+										}
+									};
+
+									for (var i = 0; i < items.length; i++) {
+										var x = {
+											"title": items[i].externalTitle,
+											"type": "postback",
+											"value": items[i].jobReqId
+										}
+										b.content.buttons.push(x);
+									}
+
+									aMessage.push(b);
+
+									return resolve(aMessage);
+
+								} else {
+									var t = {
+										"type": "text",
+										"content": "Sorry, I haven't found a position for your search term.",
+									}
+
+									aMessage.push(t);
+
+									return resolve(aMessage);
+								}
 
 							})
 					})
@@ -172,24 +179,57 @@ var readJobReqs = function (req, res) {
 	})
 };
 
-/*var readJobReqs = function (req, res) {
+var readSingleJobReq = function (req, res) {
+
+	const memory = req.body.conversation.memory;
+	var jobDesc = memory.jobDescription;
+
 	return new Promise((resolve, reject) => {
-		return requestify.request('https://api12preview.sapsf.eu/odata/v2/JobRequisition?$top=1&$format=json', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Basic ' + btoa("SF_IPS_TECHUSER@dhlergmbhT1:DoehlerSF#2018")
-			},
-			dataType: 'json'
-		}).then((r) => {
-			return resolve(r);
-		});
+		var vcap_services = JSON.parse(process.env.VCAP_SERVICES);
+		var connectivity = vcap_services.connectivity[0].credentials;
+		getDestination("successfactors")
+			.then(oDestination => {
+				getConnectivityToken()
+					.then(sToken => {
+						const agent = require('superagent');
+						agent.get(oDestination.URL + "/JobRequisition(" + jobDesc + ")?$format=json&$expand=recruiter,jobReqLocale")
+							.set("Authorization", "Basic " + btoa(oDestination.User + ":" + oDestination.Password))
+							.then(response => {
 
-	});
+								var aMessage = [];
+								var items = response.body.d;
 
-}*/
+								memory.recruiter = items.recruiter.results[0].firstName + " " + items.recruiter.results[0].lastName;
+								memory.recruiter_mail = items.recruiter.results[0].email;
+
+								memory.jobDescription = items.jobReqLocale.results[0].jobTitle;
+
+								var t = {
+									content: "Excellent, thank you. Let me summarize this for you: Job description: " + memory.jobDescription +
+										" Referred person:" + memory.person.raw,
+									type: "text"
+								}
+
+								aMessage.push(t);
+
+								var returnValue = {
+									reply: aMessage,
+									memory: memory
+								};
+								
+								return resolve(returnValue);
+
+							})
+					})
+			})
+	}).catch(err => {
+		console.log(err)
+		res.send(JSON.stringify(err))
+	})
+};
 
 module.exports = {
 	readAvailableVacationDays,
-	readJobReqs
+	readJobReqs,
+	readSingleJobReq
 }

@@ -6,7 +6,8 @@
 		"cors": "latest",
 		"@sap/xsenv": "latest",
 		"superagent": "latest",
-		"superagent-proxy": "^2.0.0"
+		"superagent-proxy": "^2.0.0",
+		"nodemailer": "latest"
 	},
 	"description": "my description",
 	"devDependencies": {

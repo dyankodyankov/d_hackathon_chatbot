@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const bot = require('./bot')
 const leave = require('./leaveRequest')
+const mail = require('./sendMail')
 
 // Start Express server
 const app = express()
@@ -51,6 +52,37 @@ app.post('/api/leave/showVacationDays', (req, res) => {
 
 app.post('/api/job/showJobReq', (req, res) => {
 	leave.readJobReqs(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success
+			})
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
+app.post('/api/job/searchSingleJob', (req, res) => {
+	leave.readSingleJobReq(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success.reply,
+				conversation: {
+					memory: success.memory
+				}
+			})
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
+app.post('/api/mail/sendMail', (req, res) => {
+	mail.sendMailFunction(req, res)
 		.then(success => {
 			res.status(200).send({
 				replies: success
