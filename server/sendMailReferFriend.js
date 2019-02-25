@@ -6,7 +6,7 @@ var sendMailFunction = function (req, res) {
 
 	return new Promise((resolve, reject) => {
 
-		console.log('sendMail-Start')
+		sap.m.MessageToast.show("INIT - DATA");
 
 		var aMessage = [];
 
@@ -24,9 +24,7 @@ var sendMailFunction = function (req, res) {
 				user: 'miketestsend@gmail.com',
 				pass: 'Test_1234'
 			}
-					
-		}); 
-		console.log('sendMail-END');
+		});
 
 		var mailOptions = {
 			from: 'miketestsend@gmail.com',

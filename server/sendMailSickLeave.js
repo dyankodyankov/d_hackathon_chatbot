@@ -6,17 +6,14 @@ var sendMailFunction = function (req, res) {
 
 	return new Promise((resolve, reject) => {
 
-		console.log('sendMail-Start')
-
 		var aMessage = [];
 
-		var email = memory.recruiter_mail;
+		//var email = memory.recruiter_mail;
 
-		var applicantName = memory.person.fullname;
+		//var applicantName = memory.person.fullname;
+		var sickPerson = memory.person.fullname;
 
-		var recruiterName = memory.recruiter;
-
-		var jobDesc = memory.jobDescription;
+		var sickDuration = memory.sick-duration.days;
 
 		var transporter = nodemailer.createTransport({
 			service: 'gmail',
@@ -24,15 +21,15 @@ var sendMailFunction = function (req, res) {
 				user: 'miketestsend@gmail.com',
 				pass: 'Test_1234'
 			}
-					
-		}); 
-		console.log('sendMail-END');
+		});
 
 		var mailOptions = {
 			from: 'miketestsend@gmail.com',
 			to: 'miketestsend@gmail.com',
-			subject: 'Build the team new candidate ' + applicantName,
-			text: 'Hello ' + recruiterName + ", we have a new referal for you: " + applicantName + " for following position " + jobDesc +
+			//subject: 'Build the team new candidate ' + applicantName,
+			subject: 'Sick note: ' + sickPerson,
+			//text: 'Hello ' + recruiterName + ", we have a new referal for you: " + applicantName + " for following position " + jobDesc +
+			text: 'Hello!' + sickPerson + "will be sick for" + sickDuration + " days." + 
 				". Please get in contact with miketestsend@gmail.com"
 		};
 

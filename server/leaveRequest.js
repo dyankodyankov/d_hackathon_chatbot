@@ -216,7 +216,7 @@ var readSingleJobReq = function (req, res) {
 									reply: aMessage,
 									memory: memory
 								};
-								
+
 								return resolve(returnValue);
 
 							})

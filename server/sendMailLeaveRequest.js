@@ -6,8 +6,6 @@ var sendMailFunction = function (req, res) {
 
 	return new Promise((resolve, reject) => {
 
-		console.log('sendMail-Start')
-
 		var aMessage = [];
 
 		var email = memory.recruiter_mail;
@@ -24,9 +22,7 @@ var sendMailFunction = function (req, res) {
 				user: 'miketestsend@gmail.com',
 				pass: 'Test_1234'
 			}
-					
-		}); 
-		console.log('sendMail-END');
+		});
 
 		var mailOptions = {
 			from: 'miketestsend@gmail.com',

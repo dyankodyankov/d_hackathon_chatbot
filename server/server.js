@@ -8,6 +8,9 @@ const cors = require('cors');
 const bot = require('./bot')
 const leave = require('./leaveRequest')
 const mail = require('./sendMail')
+const mail_lr = require('./sendMailLeaveRequest')
+const mail_rf = require('./sendMailReferFriend')
+const mail_sl = require('./sendMailSickLeave')
 
 // Start Express server
 const app = express()
@@ -83,6 +86,48 @@ app.post('/api/job/searchSingleJob', (req, res) => {
 
 app.post('/api/mail/sendMail', (req, res) => {
 	mail.sendMailFunction(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success
+			})
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
+app.post('/api/mail_lr/sendMailLeaveRequest', (req, res) => {
+	mail_lr.sendMailFunction(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success
+			})
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
+app.post('/api/mail_rf/sendMailReferFriend', (req, res) => {
+	mail_rf.sendMailFunction(req, res)
+		.then(success => {
+			res.status(200).send({
+				replies: success
+			})
+		}).catch(error => {
+			console.log('Error in your bot:', error)
+			if (!res.headersSent) {
+				res.sendStatus(400)
+			}
+		})
+});
+
+app.post('/api/mail_sl/sendMailSickLeave', (req, res) => {
+	mail_sl.sendMailFunction(req, res)
 		.then(success => {
 			res.status(200).send({
 				replies: success
